@@ -1,16 +1,20 @@
 import {Text, View, StyleSheet, Button} from 'react-native';
 
 export default function DetailScreen({navigation, route}) {
-  const {email, firstName, lastName, employeeCode, password, confirmPassword} =
-    route.params;
+  const {
+    employee_email,
+    employee_firstname,
+    employee_lastname,
+    employee_code,
+    password,
+  } = route.params;
   return (
     <View style={styles.container}>
-      <Text style={styles.input}>{firstName}</Text>
-      <Text style={styles.input}>{lastName}</Text>
-      <Text style={styles.input}>{email}</Text>
-      <Text style={styles.input}>{employeeCode}</Text>
+      <Text style={styles.input}>{employee_firstname}</Text>
+      <Text style={styles.input}>{employee_lastname}</Text>
+      <Text style={styles.input}>{employee_email}</Text>
+      <Text style={styles.input}>{employee_code}</Text>
       <Text style={styles.input}>{password}</Text>
-      <Text style={styles.input}>{confirmPassword}</Text>
       <Button title="Go Back" onPress={() => navigation.goBack()} />
     </View>
   );
@@ -25,5 +29,6 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 25,
     color: 'red',
+    
   },
 });
