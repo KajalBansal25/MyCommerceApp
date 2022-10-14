@@ -10,6 +10,7 @@ import {
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const registerValidationSchema = yup.object().shape({
   employee_firstname: yup
@@ -41,10 +42,10 @@ const registerValidationSchema = yup.object().shape({
     )
     .min(8, ({min}) => `Password must be at least ${min} characters`)
     .required('Password is required'),
-    confirmPassword: yup
-  .string()
-  .oneOf([yup.ref('password')], 'Passwords do not match')
-  .required('Confirm password is required'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Passwords do not match')
+    .required('Confirm password is required'),
 });
 
 export default function RegisterationScreen({navigation}) {
@@ -61,12 +62,12 @@ export default function RegisterationScreen({navigation}) {
               employee_lastname: '',
               employee_code: 0,
               password: '',
-              confirmPassword:'',
+              confirmPassword: '',
             }}
-            onSubmit={values => {
+            onSubmit={(values, {resetForm}) => {
               console.log(values);
               console.log('its working!');
-
+              resetForm({values: ''});
               axios
                 .post(
                   'https://dansir-backend.herokuapp.com/api/v1/create_user',
@@ -77,11 +78,19 @@ export default function RegisterationScreen({navigation}) {
                     },
                   },
                 )
-                .then(response => {
+                .then(async response => {
                   console.log('post request made!', response.data.data);
-                  navigation.navigate('Detail', response.data.data);
-                  if (response.data.status) {
+                  navigation.navigate('Tab', response.data.data);
+                  if (response.data.data) {
                     console.log(response.data.status);
+                    try {
+                      await AsyncStorage.setItem(
+                        '@storage_Key',
+                        response.data.data._id,
+                      );
+                    } catch (e) {
+                      console.log('error>>>>', e);
+                    }
                   }
                 })
                 .catch(error => {
@@ -168,7 +177,7 @@ export default function RegisterationScreen({navigation}) {
                     {errors.password}
                   </Text>
                 )}
-                    <TextInput
+                <TextInput
                   name="confirmPassword"
                   placeholder="confirmPassword"
                   style={styles.input}
@@ -177,7 +186,7 @@ export default function RegisterationScreen({navigation}) {
                   value={values.confirmPassword}
                   secureTextEntry
                 />
-                  {errors.confirmPassword && touched.confirmPassword && (
+                {errors.confirmPassword && touched.confirmPassword && (
                   <Text style={{fontSize: 10, color: 'red', marginBottom: 10}}>
                     {errors.confirmPassword}
                   </Text>
@@ -191,6 +200,19 @@ export default function RegisterationScreen({navigation}) {
               </>
             )}
           </Formik>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 10,
+            }}>
+            <Text>Already have an account? </Text>
+            <Button
+              title="Login here"
+              onPress={() => navigation.navigate('Login')}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
