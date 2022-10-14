@@ -25,30 +25,64 @@ export default function App() {
       return setIsLoggedin(false);
     }
   }
+
   useEffect(() => {
     fetchData();
-  }, []);
-
-  if (!isLoggedin) {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown: false}}>
-          <Stack.Screen name="Register" component={RegisterationScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Signup" component={SignUp} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
+  }, [isLoggedin]);
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Tab" component={MyTabs} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Detail" component={DetailScreen} />
-        <Stack.Screen name="Setting" component={SettingsScreen} />
-      </Stack.Navigator>
+      {isLoggedin ? (
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="Home" options={{headerShown: false}}>
+            {props => (
+              <HomeScreen
+                {...props}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Tab" options={{headerShown: false}}>
+            {props => (
+              <MyTabs
+                {...props}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+              />
+            )}
+          </Stack.Screen>
+
+          <Stack.Screen name="Detail" component={DetailScreen} />
+          <Stack.Screen name="Setting" component={SettingsScreen} />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="Register">
+            {props => (
+              <RegisterationScreen
+                {...props}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Login">
+            {props => (
+              <LoginScreen
+                {...props}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Signup" component={SignUp} />
+        </Stack.Navigator>
+      )}
+      <Stack.Screen name="Splash" component={SplashScreen} />
     </NavigationContainer>
   );
 }

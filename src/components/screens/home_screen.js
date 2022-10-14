@@ -4,7 +4,7 @@ import {Button, Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateSurname} from '../../actions/actions';
 
-export default function HomeScreen({navigation}) {
+export default function HomeScreen({navigation, setIsLoggedin, isLoggedin}) {
   const {name, surname} = useSelector(state => {
     console.log(state);
     return state;
@@ -32,12 +32,10 @@ export default function HomeScreen({navigation}) {
         onPress={async () => {
           try {
             await AsyncStorage.removeItem('@storage_Key');
-            console.log('arreee');
-            navigation.navigate('Register');
+            setIsLoggedin(false);
           } catch (e) {
             console.log('error in logout>>>', e);
           }
-
           console.log('Done.');
         }}
       />

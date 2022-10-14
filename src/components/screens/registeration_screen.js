@@ -48,7 +48,11 @@ const registerValidationSchema = yup.object().shape({
     .required('Confirm password is required'),
 });
 
-export default function RegisterationScreen({navigation}) {
+export default function RegisterationScreen({
+  navigation,
+  setIsLoggedin,
+  isLoggedin,
+}) {
   return (
     <SafeAreaView style={{backgroundColor: 'pink', margin: 20}}>
       <ScrollView>
@@ -65,6 +69,7 @@ export default function RegisterationScreen({navigation}) {
               confirmPassword: '',
             }}
             onSubmit={(values, {resetForm}) => {
+              setIsLoggedin(true);
               console.log(values);
               console.log('its working!');
               resetForm({values: ''});
@@ -80,7 +85,7 @@ export default function RegisterationScreen({navigation}) {
                 )
                 .then(async response => {
                   console.log('post request made!', response.data.data);
-                  navigation.navigate('Tab', response.data.data);
+
                   if (response.data.data) {
                     console.log(response.data.status);
                     try {
@@ -88,13 +93,14 @@ export default function RegisterationScreen({navigation}) {
                         '@storage_Key',
                         response.data.data._id,
                       );
+                      setIsLoggedin(true);
                     } catch (e) {
                       console.log('error>>>>', e);
                     }
                   }
                 })
                 .catch(error => {
-                  console.error(error);
+                  console.log(error.response.data);
                 });
             }}>
             {({

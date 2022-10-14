@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const loginValidationSchema = yup.object().shape({
   employee_email: yup.string().email('Invalid email').required('Required'),
@@ -26,7 +27,7 @@ const loginValidationSchema = yup.object().shape({
     .required('Password is required'),
 });
 
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({navigation, setIsLoggedin, isLoggedin}) {
   return (
     <SafeAreaView style={{backgroundColor: 'pink', margin: 20}}>
       <ScrollView>
@@ -38,11 +39,17 @@ export default function LoginScreen({navigation}) {
               employee_email: '',
               password: '',
             }}
-            onSubmit={(values, {resetForm}) => {
+            onSubmit={async (values, {resetForm}) => {
               console.log(values);
               console.log('its working!');
-              navigation.navigate('Tab');
               resetForm({values: ''});
+
+              try {
+                await AsyncStorage.setItem('@storage_Key', 'rtyui');
+                setIsLoggedin(true);
+              } catch (e) {
+                console.log('error>>>>', e);
+              }
             }}>
             {({
               handleChange,
