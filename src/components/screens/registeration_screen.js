@@ -48,11 +48,7 @@ const registerValidationSchema = yup.object().shape({
     .required('Confirm password is required'),
 });
 
-export default function RegisterationScreen({
-  navigation,
-  setIsLoggedin,
-  isLoggedin,
-}) {
+export default function RegisterationScreen({navigation, setIsLoggedin}) {
   return (
     <SafeAreaView style={{backgroundColor: 'pink', margin: 20}}>
       <ScrollView>

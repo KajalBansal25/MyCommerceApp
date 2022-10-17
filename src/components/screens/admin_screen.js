@@ -1,14 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as React from 'react';
-import {Button, Text, View} from 'react-native';
+import React from 'react';
+import {View, Text, Button} from 'react-native';
 
-export default function HomeScreen({setIsLoggedin}) {
+export default function AdminScreen({setIsLoggedin}) {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Home!</Text>
-
+    <View>
+      <Text>Admin Screen</Text>
       <Button
-        title="Logout"
+        title="logout"
         onPress={async () => {
           try {
             await AsyncStorage.removeItem('@storage_Key');

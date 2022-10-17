@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import AllAction from '../../actions';
 
 const loginValidationSchema = yup.object().shape({
   employee_email: yup.string().email('Invalid email').required('Required'),
-
   password: yup
     .string()
     .matches(/\w*[a-z]\w*/, 'Password must have a small letter')
@@ -27,7 +29,8 @@ const loginValidationSchema = yup.object().shape({
     .required('Password is required'),
 });
 
-export default function LoginScreen({navigation, setIsLoggedin, isLoggedin}) {
+export default function LoginScreen({navigation, setIsLoggedin}) {
+  let dispatch = useDispatch();
   return (
     <SafeAreaView style={{backgroundColor: 'pink', margin: 20}}>
       <ScrollView>
@@ -43,13 +46,40 @@ export default function LoginScreen({navigation, setIsLoggedin, isLoggedin}) {
               console.log(values);
               console.log('its working!');
               resetForm({values: ''});
-
-              try {
-                await AsyncStorage.setItem('@storage_Key', 'rtyui');
-                setIsLoggedin(true);
-              } catch (e) {
-                console.log('error>>>>', e);
-              }
+              axios
+                .post(
+                  'https://dansir-backend.herokuapp.com/api/v1/logIn',
+                  values,
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  },
+                )
+                .then(async response => {
+                  console.log('post request made!', response.data.data);
+                  dispatch(
+                    AllAction.userAction.fetchUserData(response.data.data),
+                  );
+                  if (response.data.data) {
+                    console.log('response>>>', response);
+                    console.log('response.data>>>', response.data);
+                    console.log('response status>>>', response.status);
+                    console.log('response.data.isAdmin', response.data.isAdmin);
+                    try {
+                      await AsyncStorage.setItem(
+                        '@storage_Key',
+                        response.data.data._id,
+                      );
+                      setIsLoggedin(true);
+                    } catch (e) {
+                      console.log('error>>>>', e);
+                    }
+                  }
+                })
+                .catch(error => {
+                  console.log(error.response.data);
+                });
             }}>
             {({
               handleChange,
@@ -75,7 +105,6 @@ export default function LoginScreen({navigation, setIsLoggedin, isLoggedin}) {
                     {errors.employee_email}
                   </Text>
                 )}
-
                 <TextInput
                   name="password"
                   placeholder="Password"
@@ -90,7 +119,6 @@ export default function LoginScreen({navigation, setIsLoggedin, isLoggedin}) {
                     {errors.password}
                   </Text>
                 )}
-
                 <Button
                   onPress={handleSubmit}
                   title="Submit"
@@ -107,6 +135,7 @@ export default function LoginScreen({navigation, setIsLoggedin, isLoggedin}) {
             justifyContent: 'center',
             alignItems: 'center',
             marginTop: 10,
+            marginBottom: 10,
           }}>
           <Text>Not having an account?</Text>
           <Button

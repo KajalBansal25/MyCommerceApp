@@ -10,10 +10,16 @@ import SplashScreen from './src/components/screens/splash_screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect, useState} from 'react';
 import SettingsScreen from './src/components/screens/setting_screen';
+import UserScreen from './src/components/screens/user_screen';
+import AdminScreen from './src/components/screens/admin_screen';
+import {useSelector} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const isUserAdmin = useSelector(state => state.userData.isAdmin);
+  console.log('isUserAdmin', isUserAdmin);
+
   const [isLoggedin, setIsLoggedin] = useState(false);
 
   async function fetchData() {
@@ -33,32 +39,68 @@ export default function App() {
   return (
     <NavigationContainer>
       {isLoggedin ? (
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <Stack.Screen name="Home" options={{headerShown: false}}>
-            {props => (
-              <HomeScreen
-                {...props}
-                isLoggedin={isLoggedin}
-                setIsLoggedin={setIsLoggedin}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="Tab" options={{headerShown: false}}>
-            {props => (
-              <MyTabs
-                {...props}
-                isLoggedin={isLoggedin}
-                setIsLoggedin={setIsLoggedin}
-              />
-            )}
-          </Stack.Screen>
-
-          <Stack.Screen name="Detail" component={DetailScreen} />
-          <Stack.Screen name="Setting" component={SettingsScreen} />
-        </Stack.Navigator>
+        isUserAdmin ? (
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}>
+            <Stack.Screen name="Admin" options={{headerShown: false}}>
+              {props => (
+                <AdminScreen
+                  {...props}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Tab" options={{headerShown: false}}>
+              {props => (
+                <MyTabs
+                  {...props}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Detail" component={DetailScreen} />
+            <Stack.Screen name="Setting" component={SettingsScreen} />
+          </Stack.Navigator>
+        ) : (
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+            }}>
+            <Stack.Screen name="User" options={{headerShown: false}}>
+              {props => (
+                <UserScreen
+                  {...props}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Home" options={{headerShown: false}}>
+              {props => (
+                <HomeScreen
+                  {...props}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Tab" options={{headerShown: false}}>
+              {props => (
+                <MyTabs
+                  {...props}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Detail" component={DetailScreen} />
+            <Stack.Screen name="Setting" component={SettingsScreen} />
+          </Stack.Navigator>
+        )
       ) : (
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="Register">
