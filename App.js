@@ -107,6 +107,7 @@ export default function App() {
                   {...props}
                   isLoggedin={isLoggedin}
                   setIsLoggedin={setIsLoggedin}
+                  tokenValue={tokenValue}
                 />
               )}
             </Stack.Screen>
