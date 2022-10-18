@@ -48,7 +48,6 @@ const SignUp = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.signupContainer}>
           <Text>Sign Up Screen</Text>
-
           <Formik
             initialValues={{
               fullName: '',

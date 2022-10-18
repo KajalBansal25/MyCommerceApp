@@ -12,18 +12,23 @@ import {useEffect, useState} from 'react';
 import SettingsScreen from './src/components/screens/setting_screen';
 import UserScreen from './src/components/screens/user_screen';
 import AdminScreen from './src/components/screens/admin_screen';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import axios from 'axios';
+import AllAction from './src/actions';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const isUserAdmin = useSelector(state => state.userData.isAdmin);
   console.log('isUserAdmin', isUserAdmin);
+  let dispatch = useDispatch();
 
   const [isLoggedin, setIsLoggedin] = useState(false);
+  const [tokenValue, setTokenValue] = useState('');
 
   async function fetchData() {
     const token = await AsyncStorage.getItem('@storage_Key');
+    setTokenValue(token);
     console.log('token--->>>>>', token);
     if (token) {
       return setIsLoggedin(true);
@@ -32,9 +37,35 @@ export default function App() {
     }
   }
 
+  function getUserData() {
+    axios
+      .post(
+        'https://dansir-backend.herokuapp.com/api/v1/get_user_data',
+        {employee_id: tokenValue},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(async response => {
+        console.log('res====>>>', response.data.data);
+        dispatch(AllAction.userAction.fetchUserData(response.data.data));
+        if (response.data.data) {
+          console.log('response.data>>>app', response.data);
+          console.log('response status>>>app', response.status);
+        }
+      })
+      .catch(error => {
+        console.log('errr==>>>', error);
+        console.log('err--->>>', error.response.data);
+      });
+  }
+
   useEffect(() => {
     fetchData();
-  }, [isLoggedin]);
+    getUserData();
+  }, [isLoggedin, tokenValue]);
 
   return (
     <NavigationContainer>

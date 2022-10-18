@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Button,
   SafeAreaView,
   ScrollView,
@@ -13,6 +14,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import AllAction from '../../actions';
+import {useState} from 'react';
 
 const loginValidationSchema = yup.object().shape({
   employee_email: yup.string().email('Invalid email').required('Required'),
@@ -30,10 +32,12 @@ const loginValidationSchema = yup.object().shape({
 });
 
 export default function LoginScreen({navigation, setIsLoggedin}) {
+  const [isLoading, setIsLoading] = useState(false);
+
   let dispatch = useDispatch();
   return (
-    <SafeAreaView style={{backgroundColor: 'pink', margin: 20}}>
-      <ScrollView>
+    <SafeAreaView>
+      <ScrollView style={{backgroundColor: 'pink', margin: 20}}>
         <View style={styles.container}>
           <Text style={styles.text}>Login Form</Text>
           <Formik
@@ -43,6 +47,7 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
               password: '',
             }}
             onSubmit={async (values, {resetForm}) => {
+              setIsLoading(true);
               console.log(values);
               console.log('its working!');
               resetForm({values: ''});
@@ -76,6 +81,7 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
                       console.log('error>>>>', e);
                     }
                   }
+                  setIsLoading(false);
                 })
                 .catch(error => {
                   console.log(error.response.data);
@@ -89,6 +95,7 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
               errors,
               touched,
               isValid,
+              isLoading,
             }) => (
               <>
                 <TextInput
@@ -119,6 +126,7 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
                     {errors.password}
                   </Text>
                 )}
+
                 <Button
                   onPress={handleSubmit}
                   title="Submit"
@@ -144,6 +152,7 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
           />
         </View>
       </ScrollView>
+      {isLoading ? <ActivityIndicator size={80} /> : null}
     </SafeAreaView>
   );
 }
