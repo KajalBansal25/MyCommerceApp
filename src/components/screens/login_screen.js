@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import AllAction from '../../actions';
 import {useState} from 'react';
+import {logInApi} from '../../service';
 
 const loginValidationSchema = yup.object().shape({
   employee_email: yup.string().email('Invalid email').required('Required'),
@@ -33,8 +33,26 @@ const loginValidationSchema = yup.object().shape({
 
 export default function LoginScreen({navigation, setIsLoggedin}) {
   const [isLoading, setIsLoading] = useState(false);
-
   let dispatch = useDispatch();
+
+  const loginApiData = values => {
+    logInApi(
+      values,
+      async response => {
+        dispatch(AllAction.userAction.fetchUserData(response.data.data));
+        if (response.data.data) {
+          try {
+            await AsyncStorage.setItem('@storage_Key', response.data.data._id);
+            setIsLoggedin(true);
+          } catch (e) {
+            console.log('error>>>>', e);
+          }
+        }
+        setIsLoading(false);
+      },
+      err => console.log(err.response, data),
+    );
+  };
   return (
     <SafeAreaView>
       <ScrollView style={{backgroundColor: 'pink', margin: 20}}>
@@ -51,41 +69,8 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
               console.log(values);
               console.log('its working!');
               resetForm({values: ''});
-              axios
-                .post(
-                  'https://dansir-backend.herokuapp.com/api/v1/logIn',
-                  values,
-                  {
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                  },
-                )
-                .then(async response => {
-                  console.log('post request made!', response.data.data);
-                  dispatch(
-                    AllAction.userAction.fetchUserData(response.data.data),
-                  );
-                  if (response.data.data) {
-                    console.log('response>>>', response);
-                    console.log('response.data>>>', response.data);
-                    console.log('response status>>>', response.status);
-                    console.log('response.data.isAdmin', response.data.isAdmin);
-                    try {
-                      await AsyncStorage.setItem(
-                        '@storage_Key',
-                        response.data.data._id,
-                      );
-                      setIsLoggedin(true);
-                    } catch (e) {
-                      console.log('error>>>>', e);
-                    }
-                  }
-                  setIsLoading(false);
-                })
-                .catch(error => {
-                  console.log(error.response.data);
-                });
+
+              loginApiData(values);
             }}>
             {({
               handleChange,
@@ -95,7 +80,6 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
               errors,
               touched,
               isValid,
-              isLoading,
             }) => (
               <>
                 <TextInput

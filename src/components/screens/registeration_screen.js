@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {createAccountApi} from '../../service';
 
 const registerValidationSchema = yup.object().shape({
   employee_firstname: yup
@@ -49,6 +49,23 @@ const registerValidationSchema = yup.object().shape({
 });
 
 export default function RegisterationScreen({navigation, setIsLoggedin}) {
+  const createAccountApiData = values => {
+    createAccountApi(
+      values,
+      async response => {
+        if (response.data.data) {
+          console.log(response.data.status);
+          try {
+            await AsyncStorage.setItem('@storage_Key', response.data.data._id);
+            setIsLoggedin(true);
+          } catch (e) {
+            console.log('error>>>>', e);
+          }
+        }
+      },
+      err => console.log(err.response.data),
+    );
+  };
   return (
     <SafeAreaView style={{backgroundColor: 'pink', margin: 20}}>
       <ScrollView>
@@ -69,35 +86,7 @@ export default function RegisterationScreen({navigation, setIsLoggedin}) {
               console.log(values);
               console.log('its working!');
               resetForm({values: ''});
-              axios
-                .post(
-                  'https://dansir-backend.herokuapp.com/api/v1/create_user',
-                  values,
-                  {
-                    headers: {
-                      Accept: 'multipart/form-data',
-                    },
-                  },
-                )
-                .then(async response => {
-                  console.log('post request made!', response.data.data);
-
-                  if (response.data.data) {
-                    console.log(response.data.status);
-                    try {
-                      await AsyncStorage.setItem(
-                        '@storage_Key',
-                        response.data.data._id,
-                      );
-                      setIsLoggedin(true);
-                    } catch (e) {
-                      console.log('error>>>>', e);
-                    }
-                  }
-                })
-                .catch(error => {
-                  console.log(error.response.data);
-                });
+              createAccountApiData(values);
             }}>
             {({
               handleChange,

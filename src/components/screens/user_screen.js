@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {View, Text, Button, TextInput, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import AllAction from '../../actions';
+import {getTotalAmountOfUser, sendAmoundOfPurchased} from '../../service';
 
 export default function UserScreen({setIsLoggedin, tokenValue}) {
   const [purchaseAmount, setPurchaseAmount] = useState(0);
@@ -17,73 +17,52 @@ export default function UserScreen({setIsLoggedin, tokenValue}) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getTotalUser();
-  }, [toTalAmount]);
-
-  function getTotalUser() {
-    axios
-      .post(
-        'https://dansir-backend.herokuapp.com/api/v1/get_Total_user',
-        {employee_id: tokenValue},
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-      .then(response => {
-        console.log('response>>>getTotalUser>>>>', response.data.data);
+    getTotalAmountOfUser(
+      {employee_id: tokenValue},
+      response => {
         setIsCallGetTotal(!isCallGetTotal);
         setAmount(response.data.data.totalAmount);
         dispatch(
           AllAction.userAction.setTotalAmount(response.data.data.totalAmount),
         );
+      },
+      error => {
+        console.log(
+          'error>>>userscreen>>>>getTotalUser>>>>>inside use effect>>>>',
+          error.response.data,
+        );
+      },
+    );
+    console.log(
+      'amount>>>userscreen>>>getTotalUser>>>>>iinside use effect>>>>',
+      amount,
+    );
+  }, [toTalAmount]);
+
+  const setAmountFunction = () => {
+    sendAmoundOfPurchased(
+      {
+        employee_id: userDetails._id,
+        employee_name: userDetails.employee_firstname,
+        employee_code: userDetails.employee_code,
+        amount: {date: date.getDate(), puchaseAmount: Number(purchaseAmount)},
+      },
+      response => {
         if (response.data.data) {
           console.log(
-            'response.data.data>>>getTotalUser>>>>',
+            'response.data.data>>>sendAmoundOfPurchased>>>>',
             response.data.data,
           );
-        }
-      })
-      .catch(error => {
-        console.log('error>>>getTotalUser>>>>>', error.response.data);
-      });
-  }
-
-  function setData() {
-    console.log('user>>>>>', userDetails);
-    const userData = {
-      employee_id: userDetails._id,
-      employee_name: userDetails.employee_firstname,
-      employee_code: userDetails.employee_code,
-      amount: {date: date.getDate(), puchaseAmount: Number(purchaseAmount)},
-    };
-
-    console.log('userdata2356789>>>>', userData);
-    axios
-      .post(
-        'https://dansir-backend.herokuapp.com/api/v1/amount/amount_user',
-        userData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-      .then(response => {
-        console.log('userdata response!', response.data.data);
-
-        if (response.data.data) {
-          console.log('response.data.data>>>setData>>>>', response.data.data);
           dispatch(
             AllAction.userAction.setTotalAmount(response.data.data.totalAmount),
           );
         }
-      })
-      .catch(error => {
-        console.log('error>>>', error.response.data);
-      });
-  }
+      },
+      error => {
+        console.log(error);
+      },
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -106,7 +85,7 @@ export default function UserScreen({setIsLoggedin, tokenValue}) {
           }}
           defaultValue={purchaseAmount}
         />
-        <Button title="submit purchase amount" onPress={() => setData()} />
+        <Button title="submit purchase amount" onPress={setAmountFunction} />
         <View style={{marginBottom: 20}}></View>
       </View>
       <Button

@@ -1,30 +1,25 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
+import {showAllAdminData} from '../../service';
+import Config from 'react-native-config';
 
 export default function AdminScreen({setIsLoggedin}) {
   const [dataForAdmin, setDataForAdmin] = useState([]);
 
   useEffect(() => {
-    fetchDataForAdmin();
-  }, []);
-
-  function fetchDataForAdmin() {
-    axios
-      .get('https://dansir-backend.herokuapp.com/api/v1/find_data/find')
-      .then(response => {
+    showAllAdminData(
+      response => {
         setDataForAdmin(response.data.result);
-        console.log('response in admin screen>>>>>>', response.data.result);
-      });
-  }
+      },
+      err => console.log(err.response.data),
+    );
+  }, []);
 
   return (
     <View>
       <Text style={{fontSize: 20, justifyContent: 'center'}}>Admin Screen</Text>
-      {console.log('dataForAdmin>>>>>', dataForAdmin)}
       {dataForAdmin.map((data, i) => {
-        console.log('data4567890987654345678', data.employee_name);
         return (
           <View key={i}>
             <Text style={styles.textInput}>
