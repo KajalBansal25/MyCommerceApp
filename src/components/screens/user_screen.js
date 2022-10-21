@@ -65,16 +65,14 @@ export default function UserScreen({setIsLoggedin, tokenValue}) {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
+      <Text style={styles.heading}>
+        Hey, {userDetails.employee_firstname} welcome to your favourite place:
+        Daffodil pantry
+      </Text>
       <View style={styles.subContainer}>
-        <Text style={styles.textStyle}>User Screen</Text>
-        <Text style={styles.textStyle}>Welcome to pantry</Text>
         <Text style={styles.textStyle}>
-          Hey, {userDetails.employee_firstname} welcome to your favourite
-          place:pantry
-        </Text>
-        <Text style={styles.textStyle}>
-          Your total amount is -----{toTalAmount}
+          Your total amount is : {toTalAmount}
         </Text>
         <Text style={styles.textStyle}>Please enter your purchase amount</Text>
         <TextInput
@@ -85,42 +83,51 @@ export default function UserScreen({setIsLoggedin, tokenValue}) {
           }}
           defaultValue={purchaseAmount}
         />
-        <Button title="submit purchase amount" onPress={setAmountFunction} />
-        <View style={{marginBottom: 20}}></View>
+        <View style={{marginTop: 20}}>
+          <Button
+            title="submit purchase amount"
+            onPress={setAmountFunction}
+            color="blue"
+          />
+        </View>
+        <View style={{margin: 20}}></View>
       </View>
-      <Button
-        title="logout"
-        onPress={async () => {
-          try {
-            await AsyncStorage.removeItem('@storage_Key');
-            setIsLoggedin(false);
-          } catch (e) {
-            console.log('error in logout>>>', e);
-          }
-          console.log('Done.');
-        }}
-      />
+      <View style={{margin: 20}}>
+        <Button
+          color="blue"
+          title="logout"
+          onPress={async () => {
+            try {
+              await AsyncStorage.removeItem('@storage_Key');
+              setIsLoggedin(false);
+            } catch (e) {
+              console.log('error in logout>>>', e);
+            }
+            console.log('Done.');
+          }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    margin: 20,
-    alignItems: 'center',
+  heading: {fontSize: 30, fontWeight: 'bold', margin: 20, color: 'orange'},
+  subContainer: {
+    backgroundColor: 'lightgreen',
+    elevation: 10,
+    padding: 20,
+    marginVertical: 40,
+    marginHorizontal: 20,
   },
-  subContainer: {backgroundColor: 'pink', elevation: 10, padding: 20},
   input: {
     width: '100%',
-    marginBottom: 10,
     borderColor: '#ccc',
     borderWidth: 1,
     padding: 12,
     borderRadius: 15,
     backgroundColor: 'white',
-    marginTop: 10,
+    marginVertical: 20,
   },
-  textStyle: {fontSize: 15, fontWeight: 'bold', marginBottom: 10},
+  textStyle: {fontSize: 20, fontWeight: 'bold', marginBottom: 10},
 });

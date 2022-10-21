@@ -62,6 +62,7 @@ export default function App() {
                 />
               )}
             </Stack.Screen>
+
             <Stack.Screen name="Tab" options={{headerShown: false}}>
               {props => (
                 <MyTabs

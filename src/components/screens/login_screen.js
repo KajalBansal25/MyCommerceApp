@@ -50,14 +50,22 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
         }
         setIsLoading(false);
       },
-      err => console.log(err.response, data),
+      err => console.log(err.response.data),
     );
   };
   return (
     <SafeAreaView>
-      <ScrollView style={{backgroundColor: 'pink', margin: 20}}>
+      <View style={{alignItems: 'center'}}>
+        <Text style={styles.text}>Login Form</Text>
+      </View>
+      <ScrollView
+        style={{
+          backgroundColor: 'pink',
+          marginHorizontal: 20,
+          marginVertical: 20,
+          paddingBottom: 20,
+        }}>
         <View style={styles.container}>
-          <Text style={styles.text}>Login Form</Text>
           <Formik
             validationSchema={loginValidationSchema}
             initialValues={{
@@ -69,7 +77,6 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
               console.log(values);
               console.log('its working!');
               resetForm({values: ''});
-
               loginApiData(values);
             }}>
             {({
@@ -110,8 +117,8 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
                     {errors.password}
                   </Text>
                 )}
-
                 <Button
+                  color="blue"
                   onPress={handleSubmit}
                   title="Submit"
                   style={styles.submit}
@@ -121,21 +128,20 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
             )}
           </Formik>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: 10,
-            marginBottom: 10,
-          }}>
-          <Text>Not having an account?</Text>
-          <Button
-            title="Register here"
-            onPress={() => navigation.navigate('Register')}
-          />
-        </View>
       </ScrollView>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text style={{fontSize: 19}}>Not having an account?</Text>
+        <Button
+          color="blue"
+          title="Register here"
+          onPress={() => navigation.navigate('Register')}
+        />
+      </View>
       {isLoading ? <ActivityIndicator size={80} /> : null}
     </SafeAreaView>
   );
@@ -147,14 +153,14 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   text: {
-    fontSize: 20,
-    marginBottom: 20,
-    color: 'blue',
-    marginHorizontal: 70,
+    fontSize: 40,
+    marginVertical: 20,
+    color: 'orange',
+    fontWeight: '700',
   },
   input: {
     width: '100%',
-    marginBottom: 10,
+    marginBottom: 20,
     borderColor: '#ccc',
     borderWidth: 1,
     padding: 12,
@@ -163,8 +169,6 @@ const styles = StyleSheet.create({
   },
   submit: {
     width: '50%',
-    backgroundColor: 'pink',
-    color: 'yellow',
     margin: 50,
   },
 });

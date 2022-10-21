@@ -67,10 +67,11 @@ export default function RegisterationScreen({navigation, setIsLoggedin}) {
     );
   };
   return (
-    <SafeAreaView style={{backgroundColor: 'pink', margin: 20}}>
-      <ScrollView>
+    <SafeAreaView>
+      <Text style={styles.text}>Registeration Form</Text>
+
+      <ScrollView style={{backgroundColor: 'pink', margin: 20}}>
         <View style={styles.container}>
-          <Text style={styles.text}>Registeration Form</Text>
           <Formik
             validationSchema={registerValidationSchema}
             initialValues={{
@@ -183,6 +184,7 @@ export default function RegisterationScreen({navigation, setIsLoggedin}) {
                   </Text>
                 )}
                 <Button
+                  color="blue"
                   onPress={handleSubmit}
                   title="Submit"
                   style={styles.submit}
@@ -191,21 +193,22 @@ export default function RegisterationScreen({navigation, setIsLoggedin}) {
               </>
             )}
           </Formik>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 10,
-            }}>
-            <Text>Already have an account? </Text>
-            <Button
-              title="Login here"
-              onPress={() => navigation.navigate('Login')}
-            />
-          </View>
         </View>
       </ScrollView>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 10,
+        }}>
+        <Text style={{fontSize: 18}}>Already have an account? </Text>
+        <Button
+          color="blue"
+          title="Login here"
+          onPress={() => navigation.navigate('Login')}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -216,14 +219,15 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   text: {
-    fontSize: 20,
-    marginBottom: 20,
-    color: 'blue',
+    fontSize: 28,
+    margin: 20,
+    color: 'orange',
     marginHorizontal: 70,
+    fontWeight: '700',
   },
   input: {
     width: '100%',
-    marginBottom: 10,
+    marginBottom: 15,
     borderColor: '#ccc',
     borderWidth: 1,
     padding: 12,
@@ -232,7 +236,6 @@ const styles = StyleSheet.create({
   },
   submit: {
     width: '50%',
-    backgroundColor: 'pink',
     color: 'yellow',
     margin: 50,
   },

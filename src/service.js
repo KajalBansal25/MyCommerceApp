@@ -32,7 +32,7 @@ export function logInApi(payload, successCallback, failCallback) {
       successCallback(resp);
     })
     .catch(ex => {
-      failCallback(ex);
+      failCallback(ex.response.data);
     });
 }
 
@@ -73,7 +73,7 @@ export function getTotalAmountOfUser(payload, successCallback, failCallback) {
       successCallback(resp);
     })
     .catch(ex => {
-      failCallback(ex);
+      failCallback(ex.resp.data);
     });
 }
 
@@ -95,12 +95,15 @@ export function sendAmoundOfPurchased(payload, successCallback, failCallback) {
 }
 
 export function showAllAdminData(successCallback, failCallback) {
+  console.log('========>>>>>>>>>>==__')
   return axios
     .get(`${url}/api/v1/find_data/find`)
     .then(resp => {
+      console.log('========>>>>>>>>>>',resp.data)
       successCallback(resp);
     })
     .catch(ex => {
+      console.log('========>>>>>>>>>>errrr',ex)
       failCallback(ex);
     });
 }
