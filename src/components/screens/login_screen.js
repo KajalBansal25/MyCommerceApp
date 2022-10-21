@@ -117,13 +117,25 @@ export default function LoginScreen({navigation, setIsLoggedin}) {
                     {errors.password}
                   </Text>
                 )}
-                <Button
-                  color="blue"
-                  onPress={handleSubmit}
-                  title="Submit"
-                  style={styles.submit}
-                  disabled={!isValid}
-                />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-evenly',
+                    alignItems: 'center',
+                  }}>
+                  <Button
+                    color="blue"
+                    onPress={handleSubmit}
+                    title="Submit"
+                    style={styles.submit}
+                    disabled={!isValid}
+                  />
+                  <Button
+                    color="blue"
+                    title="forgot password"
+                    onPress={() => navigation.navigate('Forgot')}
+                  />
+                </View>
               </>
             )}
           </Formik>

@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -10,7 +9,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
-import {showAllAdminData} from '../../service';
+import {getMoneyFromUser, showAllAdminData} from '../../service';
 
 export default function AdminScreen({setIsLoggedin}) {
   const [dataForAdmin, setDataForAdmin] = useState([]);
@@ -28,6 +27,23 @@ export default function AdminScreen({setIsLoggedin}) {
     );
     console.log('Runnn_===', dataForAdmin);
   }, [showModal]);
+
+  const getMoneyFromUserData = () => {
+    getMoneyFromUser(
+      {
+        employee_id: userId,
+        get_money: Number(userInput),
+      },
+      response => {
+        console.log('modal screen', response.data);
+        setShowModal(false);
+      },
+      err => {
+        console.log('error in modal screen', err, err.response.data),
+          setShowModal(false);
+      },
+    );
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -51,34 +67,7 @@ export default function AdminScreen({setIsLoggedin}) {
             <Button
               title="pay"
               onPress={() => {
-                axios
-                  .post(
-                    'https://dansir-backend.herokuapp.com/api/v1/money/get_money',
-                    {
-                      // employee_id: '6350d50fcf883283aab25dc7',
-                      employee_id: userId,
-
-                      get_money: Number(userInput),
-                    },
-                    {
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                    },
-                  )
-                  .then(response => {
-                    console.log('modal screen', response.data);
-                    setShowModal(false);
-                  })
-                  .catch(
-                    err =>
-                      console.log(
-                        'error in modal screen',
-                        err,
-                        err.response.data,
-                      ),
-                    setShowModal(false),
-                  );
+                getMoneyFromUserData();
               }}
               color="blue"
             />

@@ -15,6 +15,7 @@ import AdminScreen from './src/components/screens/admin_screen';
 import {useDispatch, useSelector} from 'react-redux';
 import AllAction from './src/actions';
 import {getUserData} from './src/service';
+import ForgotPasswordScreen from './src/components/screens/forgot_password_screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -132,6 +133,7 @@ export default function App() {
               />
             )}
           </Stack.Screen>
+          <Stack.Screen name="Forgot" component={ForgotPasswordScreen} />
           <Stack.Screen name="Signup" component={SignUp} />
         </Stack.Navigator>
       )}
